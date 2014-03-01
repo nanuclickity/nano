@@ -57,30 +57,54 @@ nano.data = {
 
 nano.muzi = {
 	// gets all playlists
+
+	afterLogin: function(data){
+		var list = {};
+		for(var i in data.playlists){
+			$('.selector ul').append('<li data-pid=' + data.playlists[i].pid + '>' + data.playlists[i].name + '</li>')
+		}
+		$('.selector ul li').click(function(){
+			var id = $(this).attr('data-pid');
+			nano.muzi.fetchPlaylist(id);
+			$('.container').css('display', 'inline-block');
+			$('.selector').hide()
+		})
+
+		var path = 'playlist/index.php?id='+data.likePlaylist;
+		req(path, function(data){
+			nano.data.likePlaylist = data;
+		})
+
+		nano.data.playlists = data;
+	},
+
 	getPlaylists: function(){
 		req('user/info.php?userid=me', function(data){
 			if(data === "false"){
-				$('.selector').html('<h1>Login to<a href="https://sdslabs.co.in/accounts/login.php?redirect=http://sdslabs.co.in/nano">SDSLabs</a></h1>')
-			}
-			else{
-				var list = {};
-				for(var i in data.playlists){
-					$('.selector ul').append('<li data-pid=' + data.playlists[i].pid + '>' + data.playlists[i].name + '</li>')
-				}
-				$('.selector ul li').click(function(){
-					var id = $(this).attr('data-pid');
-					nano.muzi.fetchPlaylist(id);
-					$('.container').css('display', 'inline-block');
-					$('.selector').hide()
-				})
+				$(".selector").html(' <div class="auth-box"> <h3> Login to SDSLabs </h3> <input type="text" id="auth-username" placeholder="Username"><input type="password" id="auth-password" placeholder="Password"> <button id="auth-submit">Sign In</button></div> ')
+				//$('.selector').html('<h1>Login to<a href="https://sdslabs.co.in/accounts/login.php?redirect=http://sdslabs.co.in/nano" target="_blank">SDSLabs</a> and reload.</h1>')
+				$(document).on('click', "#auth-submit", function(e){
+					$.ajax({
+						url: 'https://accounts.sdslabs.co.in/login',
+						type: 'POST',
+						data: {
+							username: $("#auth-username").val(),
+							password: $("#auth-password").val(),
+							redirect: '#'
+						},
+						error: function(){
+							console.log("Authenticated Failed.");
+						},
+						success: function(response){
+							console.log("Logged In Successfully");
+							req('user/info.php?userid=me', function(data){nano.muzi.afterLogin(data);}); 
+						}
 
-				var path = 'playlist/index.php?id='+data.likePlaylist;
-				req(path, function(data){
-					nano.data.likePlaylist = data;
-				})
-
-				nano.data.playlists = data;
+					});	
+				});
+				
 			}
+			else{ nano.muzi.afterLogin(data); }
 		});	
 	},
 
@@ -220,9 +244,16 @@ nano.hooks = {
 
 	setAlbumArt: function(){
 		var id = nano.data.current.albumId;
-		var path = nano.settings.albumPic(id);
-		var val = 'url(' + path + ')';
-		$('.poster').css('background-image', val);
+		var path = nano.settings.albumPic(id)
+			, xhr = new XMLHttpRequest();
+		xhr.onload = function(){
+			var bloburl = 'url(' + webkitURL.createObjectURL(this.response) + ')'; 
+			$('.poster').css('background-image', bloburl);
+		}
+		xhr.open('GET', path);
+		xhr.responseType = 'blob';
+		xhr.send(); 
+		
 	},
 
 	setArtist: function(){
