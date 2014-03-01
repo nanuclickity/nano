@@ -224,6 +224,9 @@ nano.player = {
 }
 
 nano.hooks = {
+	closeNano: function(){
+		return chrome.app.window.current().close();
+	},
 	setSongDetails: function(){
 		nano.hooks.setAlbumArt();
 		nano.hooks.setArtist();
@@ -392,6 +395,9 @@ nano.hooks = {
 		});
 		$('.shuffle-button').click(function(){
 			nano.hooks.shuffleHelper();
+		});
+		$('.close-button').click(function(){
+			nano.hooks.closeNano();
 		});
 		nano.hooks.setKeyboard();
 	},
