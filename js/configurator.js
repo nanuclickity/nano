@@ -5,12 +5,14 @@ window.Configurator=function(defaultConfig,persistent){
   //this is an array of configuration keys that remain persistent
   //using localStorage
   (function fetchPersistentConfig(){
-    var conf = JSON.parse(localStorage.getItem('config'));
-    if(conf){
-      for(i in conf){
-        config[i] = conf[i];
+    chrome.storage.local.get('config', function(obj){
+      var conf = JSON.parse(obj);  
+      if(conf){
+        for(i in conf){
+          config[i] = conf[i];
+        }
       }
-    }
+    });
   })();
   /** 
    * Canonical function to abstract working of config
@@ -65,7 +67,7 @@ window.Configurator=function(defaultConfig,persistent){
         var key = persistent[i];
         obj[key] = config[key];
       }
-      localStorage.setItem('config',JSON.stringify(obj));
+      chrome.storage.local.set({'config': JSON.stringify(obj)});
     }
   };
   /** 
@@ -74,8 +76,8 @@ window.Configurator=function(defaultConfig,persistent){
    * config is not affected
    */
   function _clear(){
-    localStorage.clear();
-    localStorage.setItem('config',JSON.stringify(config));
+    chrome.storage.local.clear();
+    chrome.storage.local.set({'config':JSON.stringify(config)});
   }
   return {
     get:_get,
