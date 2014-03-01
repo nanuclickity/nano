@@ -11,13 +11,73 @@ body{
 	padding: 0;
 	margin: 0;
 	outline: 0;
-	background:#333; 
+	background:#eee;
 	font-family:HelveticaNeueLTPro-UltLt;
 }
 div.container{
 	display:inline-block;
 	margin:0;
 	display: none;
+}
+
+div.auth-box h3{
+	font-family: 'Ubuntu Light', 'Segoe UI Light', 'Helevetica Neue', sans-serif;
+	font-size: 20px;
+	font-weight: lighter;
+	color: #33b5e5;
+}
+div.auth-box #auth-username, div.auth-box #auth-password, div.auth-box #auth-submit{
+	background: none;
+	border: none;
+	outline: 0;
+	display: block;
+	margin-bottom: 8px;
+	font-size: 16px;
+	font-weight: lighter;
+	font-family: 'Ubuntu Light', 'Segoe UI Light', 'Helevetica Neue', sans-serif;
+	color: #666;
+	border: 1px #bbb solid;
+	border-radius: 1px;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 6px 12px 8px 12px;
+	background-color: #fff;
+}
+div.auth-box #auth-submit{
+	background-color: #19bd61;
+	color: #eee;
+	border-color: #1ea723;
+}
+div.auth-box #auth-submit:hover{
+	box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.15);
+	background-color: #1fb935;
+}
+div.auth-box #auth-submit:active{
+	box-shadow: inset 0px 2px 7px 0px rgba(0,0,0,0.15);
+}
+
+div.mini-logout{
+	display: block;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	background-color: rgba(0,0,0,0.6);
+	width: 35px;
+	height: 35px;
+	box-sizing: border-box;
+	font-size: 14px;
+	font-family: sans-serif;
+	padding-top: 9px;
+	cursor: pointer;
+	-webkit-transition: all .1s ease;
+	transition: all .1s ease;
+}
+div.mini-logout:hover{
+	background-color: #ffaa00;
+}
+div.mini-logout:hover{
+	background-color: #ffaa00;
+	box-shadow: inset 0px 2px 5px 0px rgba(0,0,0,0.1);
 }
 div.card{
 	background:#fff;
@@ -234,8 +294,7 @@ ul.icons li.active img{
 .selector{
 	width: 250px;
 	margin: auto;
-	color: black;
-	background: white;
+	color: #444;
 	padding: 20px 0px;
 }
 .selector h1 {

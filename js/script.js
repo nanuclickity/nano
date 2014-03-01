@@ -60,6 +60,11 @@ nano.muzi = {
 
 	afterLogin: function(data){
 		var list = {};
+		$(".selector").show();
+		$(".container").hide();
+
+		$(".selector").html("<h3> Select a Playlist </h3> <ul></ul>");
+
 		for(var i in data.playlists){
 			$('.selector ul').append('<li data-pid=' + data.playlists[i].pid + '>' + data.playlists[i].name + '</li>')
 		}
@@ -77,33 +82,37 @@ nano.muzi = {
 
 		nano.data.playlists = data;
 	},
+	requestLogin: function(){
+		$(".selector").html(' <div class="auth-box"> <h3> Login to SDSLabs </h3> <input type="text" id="auth-username" placeholder="Username"><input type="password" id="auth-password" placeholder="Password"> <button id="auth-submit">Sign In</button></div> ')
+		$(document).on('click', "#auth-submit", function(e){
+			$.ajax({
+				url: 'https://accounts.sdslabs.co.in/login',
+				type: 'POST',
+				data: {
+					username: $("#auth-username").val(),
+					password: $("#auth-password").val(),
+					redirect: '#'
+				},
+				error: function(rr){
+					console.log("Authenticated Failed.", rr);
+				},
+				success: function(response){
+					console.log("Logged In Successfully");
+					$.ajax({
+						url: nano.settings.muzi + 'user/info.php?userid=me',
+						type: 'GET',
+						success: function(response){
+							nano.muzi.afterLogin(response);
+						}
+					});
+				}
 
+			});	
+		});
+	},
 	getPlaylists: function(){
 		req('user/info.php?userid=me', function(data){
-			if(data === "false"){
-				$(".selector").html(' <div class="auth-box"> <h3> Login to SDSLabs </h3> <input type="text" id="auth-username" placeholder="Username"><input type="password" id="auth-password" placeholder="Password"> <button id="auth-submit">Sign In</button></div> ')
-				//$('.selector').html('<h1>Login to<a href="https://sdslabs.co.in/accounts/login.php?redirect=http://sdslabs.co.in/nano" target="_blank">SDSLabs</a> and reload.</h1>')
-				$(document).on('click', "#auth-submit", function(e){
-					$.ajax({
-						url: 'https://accounts.sdslabs.co.in/login',
-						type: 'POST',
-						data: {
-							username: $("#auth-username").val(),
-							password: $("#auth-password").val(),
-							redirect: '#'
-						},
-						error: function(){
-							console.log("Authenticated Failed.");
-						},
-						success: function(response){
-							console.log("Logged In Successfully");
-							req('user/info.php?userid=me', function(data){nano.muzi.afterLogin(data);}); 
-						}
-
-					});	
-				});
-				
-			}
+			if(data === "false"){ nano.muzi.requestLogin(); }
 			else{ nano.muzi.afterLogin(data); }
 		});	
 	},
@@ -226,6 +235,18 @@ nano.player = {
 nano.hooks = {
 	closeNano: function(){
 		return chrome.app.window.current().close();
+	},
+	logout: function(){
+		$.ajax({
+			url: 'https://sdslabs.co.in/accounts/logout.php',
+			complete: function(){				
+				console.log("Logout Successfull.");
+				$('.container').hide();
+				$('.selector').show();
+				nano.muzi.requestLogin();
+				nano.data.song.pause();
+			}
+		});
 	},
 	setSongDetails: function(){
 		nano.hooks.setAlbumArt();
@@ -399,11 +420,15 @@ nano.hooks = {
 		$('.close-button').click(function(){
 			nano.hooks.closeNano();
 		});
+		$('.mini-logout').click(function(){
+			nano.hooks.logout();
+		});
 		nano.hooks.setKeyboard();
 	},
 
 	setKeyboard: function(){
 		$('body').on('keydown', function(e){
+			if($('.selector input').length){ return }
 			var key = e.keyCode;
 			switch(key){
 				case 38: 
