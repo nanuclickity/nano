@@ -1,5 +1,6 @@
 #Muzi Nano
-A minimalist, no bullshit, no distraction music player for SDSLabs' Muzi. [Demo](http://sdslabs.co.in/nano) (works only on IIT Roorkee intranet)
+A chrome packaged app for SDSLabs' Muzi.
+
 
 ##Technology
 1. Plain ol' Javascript
