@@ -5,6 +5,6 @@ chrome.app.runtime.onLaunched.addListener(function() {
       "height": 341,
       "left": (screen.width / 2) - 500,
       "top": (screen.height / 2) - 270
-    }
+    },"resizable": false
   }, function(win){ win.console.log("NANO: Ready");  });
 });
