@@ -7,9 +7,15 @@
       "scripts": ["/js/background.js"]
     }
   },
+	"icons":{
+	"16":"icon16.png",
+	"128":"icon128.png"
+},
   "permissions": [
       "<all_urls>",
       "notifications",
       "storage"
   ]
+ 
+
 }
